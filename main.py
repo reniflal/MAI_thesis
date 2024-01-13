@@ -1,6 +1,8 @@
 from psychopy.iohub import launchHubServer
 from psychopy.core import getTime, wait
 from psychopy import visual
+from button_box import button_box
+import random
 
 win = visual.Window(size=(1280, 720),pos=(0,0),allowGUI=True, monitor='testMonitor', units='pix', screen=0, color=(-0.2, -0.2, -0.2), fullscr=True, colorSpace='rgb')
 
@@ -30,28 +32,9 @@ textboxloaded=visual.TextBox(
     grid_horz_justification='center',
     grid_vert_justification='center')
 
-color_one = 'red'
-color_two = 'green'
-# Positions of the rectanges.
-pos_one = (-100, 0)
-pos_two = (100, 0)
 
-rect_one = visual.Rect(
-    win=win,
-    fillColor=color_one,
-    lineColor=color_one, 
-    size=100,
-    pos=pos_one,
-    opacity=1
-    )
-rect_two = visual.Rect(
-    win=win,
-    fillColor=color_two,
-    lineColor=color_two, 
-    size=100,
-    pos=pos_two,
-    opacity=1
-    )
+button_box1 = button_box(window=win)
+button_box1.create_all()
 
 
 textboxloaded.draw()
@@ -69,32 +52,47 @@ tracker = io.devices.tracker
 tracker.setRecordingState(True)
 
 
-
-
-
 wait(1)
-textboxloaded.setText("Trial starting")
-textboxloaded.draw()
-rect_one.draw()
-rect_two.draw()
 
-win.flip()
-stime = getTime()
-while getTime()-stime < 15.0:
-    
-    gaze_pos = tracker.getPosition()
-    print(gaze_pos)
-    if rect_one.contains(gaze_pos):
-        print("looking into rectangle 1")
-    if rect_two.contains(gaze_pos):
-        print("looking into rectangle 2")
-    textboxloaded.setText("Trial starting " + str(gaze_pos))
+num_iterations=2
+
+for t in range(1,num_iterations+1):
+    win.flip()
+    wait(1)
+
+
+    trial_target = random.randint(1,16)
+    textboxloaded.setText("Target(" +str(t)+ ") is Box "+ str(trial_target))
     textboxloaded.draw()
-    rect_one.draw()
-    rect_two.draw()
+    button_box1.draw_all()
 
     win.flip()
-    wait(0.1)
+
+
+    stime = getTime()
+    time_out = 1000.0
+    gaze_time = 2.0
+    gaze_in_time = 0
+    gaze_out_time = 0
+    gazing = False
+
+    while (gaze_out_time-gaze_in_time < gaze_time) and (getTime() - stime < time_out):
+        
+        gaze_pos = tracker.getPosition()
+        print(gaze_pos)
+        if(button_box1.check_button_gaze(trial_target,gaze_pos) and gazing==False):
+            gazing = True
+            gaze_in_time = getTime()
+        elif (button_box1.check_button_gaze(trial_target,gaze_pos) and gazing==True):
+            gaze_out_time = getTime()
+        elif (gazing == True):
+            gazing = False
+
+        textboxloaded.draw()
+        button_box1.draw_all()
+        win.flip()
+        wait(0.1)
+    print("trial"+str(t)+" ended")
 
 
 
@@ -102,3 +100,6 @@ tracker.setRecordingState(False)
 
 # Stop the ioHub Server
 io.quit()
+
+
+
