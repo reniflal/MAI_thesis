@@ -70,12 +70,12 @@ for t in range(1,num_iterations+1):
 
 
     stime = getTime()
-    time_out = 1000.0
+    time_out = 60.0
     gaze_time = 2.0
     gaze_in_time = 0
     gaze_out_time = 0
     gazing = False
-
+    
     while (gaze_out_time-gaze_in_time < gaze_time) and (getTime() - stime < time_out):
         
         gaze_pos = tracker.getPosition()
@@ -83,15 +83,19 @@ for t in range(1,num_iterations+1):
         if(button_box1.check_button_gaze(trial_target,gaze_pos) and gazing==False):
             gazing = True
             gaze_in_time = getTime()
+            button_box1.update_button_color(trial_target,button_box1.color_two)
         elif (button_box1.check_button_gaze(trial_target,gaze_pos) and gazing==True):
             gaze_out_time = getTime()
+            button_box1.update_button_color(trial_target,button_box1.color_two)
         elif (gazing == True):
             gazing = False
+            button_box1.update_button_color(trial_target,button_box1.color_one)
 
         textboxloaded.draw()
         button_box1.draw_all()
         win.flip()
         wait(0.1)
+    button_box1.update_button_color(trial_target,button_box1.color_one)
     print("trial"+str(t)+" ended")
 
 

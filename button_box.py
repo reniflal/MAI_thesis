@@ -23,7 +23,7 @@ class button_box:
         self.pos15 = (0,-100)
         self.pos16 = (0,-200)
         
-    
+       
     def create_all(self):
         self.rect_one = visual.Rect( win=self.win, name="one", fillColor=self.color_one, lineColor=self.color_one,  size=self.size,
                                 pos=self.pos1, opacity=1)
@@ -112,6 +112,56 @@ class button_box:
         self.text_fifteen.draw()
         self.rect_sixteen.draw()
         self.text_sixteen.draw()
+
+    def update_button_color(self, button_number, color):
+        if(button_number == 1):
+            self.rect_one.fillColor = color
+            self.rect_one.lineColor = color
+        elif (button_number == 2):
+            self.rect_two.fillColor = color
+            self.rect_two.lineColor = color
+        elif (button_number == 3):
+            self.rect_three.fillColor = color
+            self.rect_three.lineColor = color
+        elif (button_number == 4):
+            self.rect_four.fillColor = color
+            self.rect_four.lineColor = color
+        elif (button_number == 5):
+            self.rect_five.fillColor = color
+            self.rect_five.lineColor = color
+        elif (button_number == 6):
+            self.rect_six.fillColor = color
+            self.rect_six.lineColor = color
+        elif (button_number == 7):
+            self.rect_seven.fillColor = color
+            self.rect_seven.lineColor = color
+        elif (button_number == 8):
+            self.rect_eight.fillColor = color
+            self.rect_eight.lineColor = color
+        elif (button_number == 9):
+            self.rect_nine.fillColor = color
+            self.rect_nine.lineColor = color
+        elif (button_number == 10):
+            self.rect_ten.fillColor = color
+            self.rect_ten.lineColor = color
+        elif (button_number == 11):
+            self.rect_eleven.fillColor = color
+            self.rect_eleven.lineColor = color
+        elif (button_number == 12):
+            self.rect_twelve.fillColor = color
+            self.rect_twelve.lineColor = color
+        elif (button_number == 13):
+            self.rect_thirteen.fillColor = color
+            self.rect_thirteen.lineColor = color
+        elif (button_number == 14):
+            self.rect_fourteen.fillColor = color
+            self.rect_fourteen.lineColor = color
+        elif (button_number == 15):
+            self.rect_fifteen.fillColor = color
+            self.rect_fifteen.lineColor = color
+        elif (button_number == 16):
+            self.rect_sixteen.fillColor = color
+            self.rect_sixteen.lineColor = color
 
     def check_button_gaze(self, button_number,eye_position):
         if(button_number == 1):
