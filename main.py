@@ -3,8 +3,15 @@ from psychopy.core import getTime, wait
 from psychopy import visual
 from button_box import button_box
 import random
+import serial
 
 win = visual.Window(size=(1280, 720),pos=(0,0),allowGUI=True, monitor='testMonitor', units='pix', screen=0, color=(-0.2, -0.2, -0.2), fullscr=True, colorSpace='rgb')
+
+# Set the serial port parameters
+port = 'COM1'  # Change this to your specific serial port
+baud_rate = 9600
+# Open the serial port
+ser = serial.Serial(port, baud_rate, timeout=1)
 
 # A Textbox stim that uses more of the supported graphical features
 #
@@ -67,6 +74,8 @@ for t in range(1,num_iterations+1):
     button_box1.draw_all()
 
     win.flip()
+    ser.write(b'B')
+
 
 
     stime = getTime()
@@ -95,13 +104,14 @@ for t in range(1,num_iterations+1):
         button_box1.draw_all()
         win.flip()
         wait(0.1)
+    ser.write(b'E')
     button_box1.update_button_color(trial_target,button_box1.color_one)
     print("trial"+str(t)+" ended")
 
 
 
 tracker.setRecordingState(False)
-
+ser.close()
 # Stop the ioHub Server
 io.quit()
 
