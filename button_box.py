@@ -4,6 +4,7 @@ class button_box:
     def __init__(self, window):
         self.color_one = 'red'
         self.color_two = 'green'
+        self.color_three = 'blue'
         self.win = window
         self.size = 70
         self.pos1 = (-300,100)

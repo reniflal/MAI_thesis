@@ -4,6 +4,7 @@ from psychopy import visual
 from button_box import button_box
 import random
 import serial
+from psychopy import logging
 
 win = visual.Window(size=(1280, 720),pos=(0,0),allowGUI=True, monitor='testMonitor', units='pix', screen=0, color=(-0.2, -0.2, -0.2), fullscr=True, colorSpace='rgb')
 
@@ -74,7 +75,7 @@ for t in range(1,num_iterations+1):
     button_box1.draw_all()
 
     win.flip()
-    ser.write(b'B')
+    ser.write(b'1')
 
 
 
@@ -104,7 +105,11 @@ for t in range(1,num_iterations+1):
         button_box1.draw_all()
         win.flip()
         wait(0.1)
-    ser.write(b'E')
+    ser.write(b'9')
+    button_box1.update_button_color(trial_target,button_box1.color_three)
+    button_box1.draw_all()
+    win.flip()
+    wait(0.5)
     button_box1.update_button_color(trial_target,button_box1.color_one)
     print("trial"+str(t)+" ended")
 
