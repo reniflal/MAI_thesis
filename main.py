@@ -4,10 +4,12 @@ from psychopy import visual
 from button_box import button_box
 import random
 import serial
-from psychopy import logging
+from psychopy import logging, data, core
 
 win = visual.Window(size=(1280, 720),pos=(0,0),allowGUI=True, monitor='testMonitor', units='pix', screen=0, color=(-0.2, -0.2, -0.2), fullscr=True, colorSpace='rgb')
 
+time_out = 60.0
+gaze_time = 2.0
 # Set the serial port parameters
 port = 'COM1'  # Change this to your specific serial port
 baud_rate = 9600
@@ -52,6 +54,13 @@ ioConfig = {ioDevice: {'name': 'tracker', 'device_number': 0}, 'window': win}
 io = launchHubServer(**ioConfig)
 
 
+# Open a data file for logging
+log_file_path = "log.txt"
+log_file = open(log_file_path, 'w')
+log_file.write('Time\tGazeX\tGazeY\tTrial\tTarget\tGazing\n')  # Writing header
+clock = core.Clock()
+
+
 
 win.flip()
 # Get the eye tracker device.
@@ -80,8 +89,7 @@ for t in range(1,num_iterations+1):
 
 
     stime = getTime()
-    time_out = 60.0
-    gaze_time = 2.0
+    
     gaze_in_time = 0
     gaze_out_time = 0
     gazing = False
@@ -89,7 +97,9 @@ for t in range(1,num_iterations+1):
     while (gaze_out_time-gaze_in_time < gaze_time) and (getTime() - stime < time_out):
         
         gaze_pos = tracker.getPosition()
-        print(gaze_pos)
+        # print(gaze_pos)
+        
+
         if(button_box1.check_button_gaze(trial_target,gaze_pos) and gazing==False):
             gazing = True
             gaze_in_time = getTime()
@@ -100,11 +110,12 @@ for t in range(1,num_iterations+1):
         elif (gazing == True):
             gazing = False
             button_box1.update_button_color(trial_target,button_box1.color_one)
-
+        g_str = button_box1.which_button_gaze(gaze_pos)
+        log_file.write(f'{clock.getTime()}\t{gaze_pos[0]}\t{gaze_pos[1]}\t{t}\t{trial_target}\t{g_str}\n')
         textboxloaded.draw()
         button_box1.draw_all()
         win.flip()
-        wait(0.1)
+        wait(0.05)
     ser.write(b'9')
     button_box1.update_button_color(trial_target,button_box1.color_three)
     button_box1.draw_all()
@@ -119,6 +130,7 @@ tracker.setRecordingState(False)
 ser.close()
 # Stop the ioHub Server
 io.quit()
+log_file.close()
 
 
 

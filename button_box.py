@@ -197,6 +197,42 @@ class button_box:
            return  (self.rect_fifteen.contains(eye_position))
         elif (button_number == 16):
            return  (self.rect_sixteen.contains(eye_position))
+    
+    def which_button_gaze(self, eye_position):
+        if(self.rect_one.contains(eye_position)):
+           return  (1)
+        elif (self.rect_two.contains(eye_position)):
+           return  (2)
+        elif (self.rect_three.contains(eye_position)):
+           return  (3)
+        elif (self.rect_four.contains(eye_position)):
+           return  (4)
+        elif (self.rect_five.contains(eye_position)):
+           return  (5)
+        elif (self.rect_six.contains(eye_position)):
+           return  (6)
+        elif (self.rect_seven.contains(eye_position)):
+           return  (7)
+        elif (self.rect_eight.contains(eye_position)):
+           return  (8)
+        elif (self.rect_nine.contains(eye_position)):
+           return  (9)
+        elif (self.rect_ten.contains(eye_position)):
+           return  (10)
+        elif (self.rect_eleven.contains(eye_position)):
+           return  (11)
+        elif (self.rect_twelve.contains(eye_position)):
+           return  (12)
+        elif (self.rect_thirteen.contains(eye_position)):
+           return  (13)
+        elif (self.rect_fourteen.contains(eye_position)):
+           return  (14)
+        elif (self.rect_fifteen.contains(eye_position)):
+           return  (15)
+        elif (self.rect_sixteen.contains(eye_position)):
+           return  (16)
+        else:
+           return (0)
 
 
         
