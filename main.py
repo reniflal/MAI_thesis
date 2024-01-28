@@ -5,6 +5,8 @@ from button_box import button_box
 import random
 import serial
 from psychopy import logging, data, core
+import yaml
+from collections import deque
 
 win = visual.Window(size=(1280, 720),pos=(0,0),allowGUI=True, monitor='testMonitor', units='pix', screen=0, color=(-0.2, -0.2, -0.2), fullscr=True, colorSpace='rgb')
 
@@ -49,9 +51,14 @@ button_box1.create_all()
 
 textboxloaded.draw()
 
-ioDevice = 'eyetracker.hw.mouse.EyeTracker'
-ioConfig = {ioDevice: {'name': 'tracker', 'device_number': 0}, 'window': win}
+# ioDevice = 'eyetracker.hw.mouse.EyeTracker'
+# ioConfig = {ioDevice: {'name': 'tracker', 'device_number': 0}, 'window': win}
+yaml_file_path = 'tobii_config.yml'
+with open(yaml_file_path, 'r') as file:
+    ioConfig = {'eyetracker.hw.tobii.EyeTracker':yaml.safe_load(file), 'window': win}
+    # print(ioConfig)
 io = launchHubServer(**ioConfig)
+
 
 
 # Open a data file for logging
@@ -65,6 +72,8 @@ clock = core.Clock()
 win.flip()
 # Get the eye tracker device.
 tracker = io.devices.tracker
+# run eyetracker calibration
+r = tracker.runSetupProcedure()
 # Check for and print any eye tracker events received...
 tracker.setRecordingState(True)
 
@@ -98,6 +107,8 @@ for t in range(1,num_iterations+1):
         
         gaze_pos = tracker.getPosition()
         # print(gaze_pos)
+        if((gaze_pos ==None)):
+            continue
         
 
         if(button_box1.check_button_gaze(trial_target,gaze_pos) and gazing==False):
