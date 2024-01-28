@@ -10,8 +10,13 @@ from collections import deque
 
 win = visual.Window(size=(1280, 720),pos=(0,0),allowGUI=True, monitor='testMonitor', units='pix', screen=0, color=(-0.2, -0.2, -0.2), fullscr=True, colorSpace='rgb')
 
-time_out = 60.0
-gaze_time = 2.0
+time_out = 60.0 #iteration timeout
+gaze_time = 2.0 #gaze time needed to select
+window_size = 10 # rolling average window for gaze positions
+num_iterations=2 #experiment interations
+if window_size <= 0:
+        raise ValueError("Window size must be a positive integer.")
+
 # Set the serial port parameters
 port = 'COM1'  # Change this to your specific serial port
 baud_rate = 9600
@@ -56,7 +61,6 @@ textboxloaded.draw()
 yaml_file_path = 'tobii_config.yml'
 with open(yaml_file_path, 'r') as file:
     ioConfig = {'eyetracker.hw.tobii.EyeTracker':yaml.safe_load(file), 'window': win}
-    # print(ioConfig)
 io = launchHubServer(**ioConfig)
 
 
@@ -79,8 +83,8 @@ tracker.setRecordingState(True)
 
 
 wait(1)
-
-num_iterations=2
+window_queue0 = deque(maxlen=window_size)
+window_queue1 = deque(maxlen=window_size)
 
 for t in range(1,num_iterations+1):
     win.flip()
@@ -105,12 +109,19 @@ for t in range(1,num_iterations+1):
     
     while (gaze_out_time-gaze_in_time < gaze_time) and (getTime() - stime < time_out):
         
-        gaze_pos = tracker.getPosition()
+        gaze_pos_temp = tracker.getPosition()
         # print(gaze_pos)
-        if((gaze_pos ==None)):
+        if((gaze_pos_temp ==None)):
             continue
+        window_queue0.append(gaze_pos_temp[0])
+        window_queue1.append(gaze_pos_temp[1])
         
-
+        if len(window_queue0) == window_size:
+             gaze_pos[0] = sum(window_queue0)/window_size
+             gaze_pos[1] = sum(window_queue1)/window_size
+        else:
+            gaze_pos = gaze_pos_temp
+        visual.Circle(win, pos=(gaze_pos[0],gaze_pos[1]), radius=10, fillColor='red').draw()
         if(button_box1.check_button_gaze(trial_target,gaze_pos) and gazing==False):
             gazing = True
             gaze_in_time = getTime()
