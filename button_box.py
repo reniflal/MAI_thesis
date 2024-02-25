@@ -6,23 +6,23 @@ class button_box:
         self.color_two = 'green'
         self.color_three = 'blue'
         self.win = window
-        self.size = 70
-        self.pos1 = (-300,100)
-        self.pos2 = (-200,100)
-        self.pos3 = (-100,100)
-        self.pos4 = (0,100)
-        self.pos5 = (100,100)
-        self.pos6 = (200,100)
-        self.pos7 = (300,100)
-        self.pos8 = (-300,0)
-        self.pos9 = (-200,0)
-        self.pos10 = (-100,0)
+        self.size = 150
+        self.pos1 = (-600,200)
+        self.pos2 = (-400,200)
+        self.pos3 = (-200,200)
+        self.pos4 = (0,200)
+        self.pos5 = (200,200)
+        self.pos6 = (400,200)
+        self.pos7 = (600,200)
+        self.pos8 = (-600,0)
+        self.pos9 = (-400,0)
+        self.pos10 = (-200,0)
         self.pos11 = (0,0)
-        self.pos12 = (100,0)
-        self.pos13 = (200,0)
-        self.pos14 = (300,0)
-        self.pos15 = (0,-100)
-        self.pos16 = (0,-200)
+        self.pos12 = (200,0)
+        self.pos13 = (400,0)
+        self.pos14 = (600,0)
+        self.pos15 = (0,-200)
+        self.pos16 = (0,-400)
         
        
     def create_all(self):

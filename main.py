@@ -7,11 +7,12 @@ import serial
 from psychopy import logging, data, core
 import yaml
 from collections import deque
-
+    
 win = visual.Window(size=(1280, 720),pos=(0,0),allowGUI=True, monitor='testMonitor', units='pix', screen=0, color=(-0.2, -0.2, -0.2), fullscr=True, colorSpace='rgb')
 
 time_out = 60.0 #iteration timeout
 gaze_time = 2.0 #gaze time needed to select
+select_time = 0.5
 window_size = 10 # rolling average window for gaze positions
 num_iterations=2 #experiment interations
 if window_size <= 0:
@@ -42,7 +43,7 @@ textboxloaded=visual.TextBox(
                             # number of rows of text to support
                             # instead of by a screen
                             # units width x height.
-    pos=(0.0,.5),
+    pos=(0.0,.75),
     # If the text string length < num rows * num cols in
     # textgrid_shape, how should text be justified?
     #
@@ -52,7 +53,7 @@ textboxloaded=visual.TextBox(
 
 button_box1 = button_box(window=win)
 button_box1.create_all()
-
+   
 
 textboxloaded.draw()
 
@@ -63,17 +64,17 @@ with open(yaml_file_path, 'r') as file:
     ioConfig = {'eyetracker.hw.tobii.EyeTracker':yaml.safe_load(file), 'window': win}
 io = launchHubServer(**ioConfig)
 
-
+  
 
 # Open a data file for logging
 log_file_path = "log.txt"
 log_file = open(log_file_path, 'w')
 log_file.write('Time\tGazeX\tGazeY\tTrial\tTarget\tGazing\n')  # Writing header
 clock = core.Clock()
-
-
+   
 
 win.flip()
+
 # Get the eye tracker device.
 tracker = io.devices.tracker
 # run eyetracker calibration
@@ -138,13 +139,14 @@ for t in range(1,num_iterations+1):
         button_box1.draw_all()
         win.flip()
         wait(0.05)
-    ser.write(b'9')
+    ser.write(b'8')
     button_box1.update_button_color(trial_target,button_box1.color_three)
     button_box1.draw_all()
     win.flip()
-    wait(0.5)
+    wait(select_time)
     button_box1.update_button_color(trial_target,button_box1.color_one)
     print("trial"+str(t)+" ended")
+    ser.write(b'9')
 
 
 
