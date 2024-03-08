@@ -1,0 +1,3 @@
+include bin
+include lib
+include src/equipment/io_config/*.yml

@@ -1,0 +1,21 @@
+---
+monitor_devices:
+  # SR Research EyeLink 1000 eye tracker
+  # https://www.psychopy.org/api/iohub/device/eyetracker_interface/SR_Research_Implementation_Notes.html#default-device-settings
+  eyetracker.hw.sr_research.eyelink.EyeTracker:
+    name: tracker
+    model_name: EYELINK 1000 DESKTOP
+    calibration:
+      type: THIRTEEN_POINTS
+      screen_background_color: black
+      auto_pace: True
+      target_attributes:
+        outer_diameter: .5
+        outer_fill_color: black
+        outer_line_color: white
+        inner_diameter: .22
+        inner_stroke_width: 0
+        inner_fill_color: white
+    runtime_settings:
+      sampling_rate: 500
+      track_eyes: BINOCULAR

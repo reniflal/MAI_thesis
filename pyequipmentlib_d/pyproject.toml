@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=61.0","attrdict","numpy"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyequipmentlib"
+version = "0.0.1"
+authors = [
+  { name="Arne Van Den Kerchove", email="arne.vandenkerchove@kuleuven.be" },
+]
+description = "Python library to control experimental equipment"
+readme = "README.md"
+#requires-python = "==3.8.*"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+dynamic = ["dependencies"]
+[project.urls]
+"Homepage" = "https://gitlab.kuleuven.be/compneuro/pyequipmentlib"
+[project.scripts]
+test-markers = "equipment.scripts.test_markers:main_cli"
+test-eyetracker = "equipment.scripts.test_eyetracker:main_cli"
+test-frametimes = "equipment.scripts.test_frametimes:main_cli"
+
+[tool.setuptools]
+include-package-data = true
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}

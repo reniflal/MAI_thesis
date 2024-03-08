@@ -10,3 +10,4 @@ dependencies:
   - SoundFile; platform_system == "Windows"
   - websocket_client
   - pyserial
+  - keyboard

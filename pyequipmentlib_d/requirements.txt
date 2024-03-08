@@ -1,0 +1,12 @@
+psychopy<2023.2
+click
+importlib_resources
+
+# Optional: tobii eye tracker
+tobii-research
+psychopy-eyetracker-tobii
+# Optional: stimtracker USB markers
+pyxid @ git+https://github.com/cedrus-opensource/pyxid.git@pyxid1.0_legacy#egg=pyxid
+# Optional: serial markers
+pyserial
+pyxid2
