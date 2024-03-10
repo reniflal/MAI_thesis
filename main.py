@@ -4,7 +4,7 @@ from psychopy import visual
 from button_box import button_box
 import random
 import serial
-from psychopy import logging, data, core
+from psychopy import logging, data, core, event
 import yaml
 from collections import deque
 import keyboard
@@ -12,6 +12,8 @@ import keyboard
 import sys
 import os
 
+
+recalibrated = False #global variable
 # Get the absolute path of the parent directory of the current file (main.py)
 current_dir = os.path.dirname(os.path.abspath(__file__))
 # Append the path of the subfolder to the system path
@@ -30,11 +32,7 @@ with get_marker('stimtracker',win) as marker:
     if window_size <= 0:
             raise ValueError("Window size must be a positive integer.")
 
-    # # Set the serial port parameters
-    # port = 'COM1'  # Change this to your specific serial port
-    # baud_rate = 9600
-    # # Open the serial port
-    # ser = serial.Serial(port, baud_rate, timeout=1)
+
 
     # A Textbox stim that uses more of the supported graphical features
     #
@@ -92,7 +90,14 @@ with get_marker('stimtracker',win) as marker:
     # run eyetracker calibration
     r = tracker.runSetupProcedure()
     
-    keyboard.add_hotkey('ctrl+shift+c', tracker.runSetupProcedure)
+    def call_setup(tracker_var):
+        tracker_var.setRecordingState(False)
+        tracker_var.runSetupProcedure()
+        tracker_var.setRecordingState(True)
+        global recalibrated
+        recalibrated = True
+
+    keyboard.add_hotkey('ctrl+shift+c', lambda: call_setup(tracker))
     # Check for and print any eye tracker events received...
     tracker.setRecordingState(True)
 
@@ -112,7 +117,6 @@ with get_marker('stimtracker',win) as marker:
         # Set marker value to 1 
         marker.send(1) 
         win.flip()
-        # ser.write(b'1')
 
 
         stime = getTime()
@@ -122,10 +126,15 @@ with get_marker('stimtracker',win) as marker:
         gazing = False
         
         while (gaze_out_time-gaze_in_time < gaze_time) and (getTime() - stime < time_out):  
+
             gaze_pos_temp = tracker.getPosition()
-            # print(gaze_pos)
+            # print(gaze_pos_temp)
+            # print(type(gaze_pos_temp))
+            if(not isinstance(gaze_pos_temp,list)):
+                continue
             if((gaze_pos_temp ==None)):
                 continue
+
             window_queue0.append(gaze_pos_temp[0])
             window_queue1.append(gaze_pos_temp[1])
             
@@ -151,8 +160,8 @@ with get_marker('stimtracker',win) as marker:
             button_box1.draw_all()
             win.flip()
             wait(0.05)
-        # ser.write(b'8')
-        # Set marker value to 8
+
+        # Set marker value to 2
         marker.send(2) 
         button_box1.update_button_color(trial_target,button_box1.color_three)
         button_box1.draw_all()
@@ -160,15 +169,13 @@ with get_marker('stimtracker',win) as marker:
         wait(select_time)
         button_box1.update_button_color(trial_target,button_box1.color_one)
         print("trial"+str(t)+" ended")
-        # Set marker value to 9
-        marker.send(3) 
+        # Set marker value to 4
+        marker.send(4) 
         win.flip()
-        # ser.write(b'9')
 
 
 
     tracker.setRecordingState(False)
-    # ser.close()
     # Stop the ioHub Server
     io.quit()
     log_file.close()
