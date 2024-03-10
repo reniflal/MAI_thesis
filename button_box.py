@@ -1,4 +1,5 @@
 from psychopy import visual
+import random
 class button_box:
 
     def __init__(self, window):
@@ -7,6 +8,7 @@ class button_box:
         self.color_three = 'blue'
         self.win = window
         self.size = 150
+        self.pos = []
         self.pos1 = (-600,200)
         self.pos2 = (-400,200)
         self.pos3 = (-200,200)
@@ -23,9 +25,46 @@ class button_box:
         self.pos14 = (600,0)
         self.pos15 = (0,-200)
         self.pos16 = (0,-400)
-        
+        self.pos.append(self.pos1)
+        self.pos.append(self.pos2)
+        self.pos.append(self.pos3)
+        self.pos.append(self.pos4)
+        self.pos.append(self.pos5)
+        self.pos.append(self.pos6)
+        self.pos.append(self.pos7)
+        self.pos.append(self.pos8)
+        self.pos.append(self.pos9)
+        self.pos.append(self.pos10)
+        self.pos.append(self.pos11)
+        self.pos.append(self.pos12)
+        self.pos.append(self.pos13)
+        self.pos.append(self.pos14)
+        self.pos.append(self.pos15)
+        self.pos.append(self.pos16)
+
+    def shuffle_pos(self):
+       random.shuffle(self.pos)
+       self.pos1 = self.pos[0]
+       self.pos2 = self.pos[1]
+       self.pos3 = self.pos[2]
+       self.pos4 = self.pos[3]
+       self.pos5 = self.pos[4]
+       self.pos6 = self.pos[5]
+       self.pos7 = self.pos[6]
+       self.pos8 = self.pos[7]
+       self.pos9 = self.pos[8]
+       self.pos10 = self.pos[9]
+       self.pos11 = self.pos[10]
+       self.pos12 = self.pos[11]
+       self.pos13 = self.pos[12]
+       self.pos14 = self.pos[13]
+       self.pos15 = self.pos[14]
+       self.pos16 = self.pos[15]
+
+
        
     def create_all(self):
+        self.shuffle_pos()
         self.rect_one = visual.Rect( win=self.win, name="one", fillColor=self.color_one, lineColor=self.color_one,  size=self.size,
                                 pos=self.pos1, opacity=1)
         self.text_one = visual.TextStim(win=self.win, text='Box 1', color='black', height=20, pos=self.pos1)

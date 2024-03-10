@@ -63,7 +63,7 @@ with get_marker('stimtracker',win) as marker:
 
     button_box1 = button_box(window=win)
     button_box1.create_all()
-    
+
 
     textboxloaded.draw()
 
@@ -74,14 +74,15 @@ with get_marker('stimtracker',win) as marker:
         ioConfig = {'eyetracker.hw.tobii.EyeTracker':yaml.safe_load(file), 'window': win}
     io = launchHubServer(**ioConfig)
 
-    
+
 
     # Open a data file for logging
-    log_file_path = "log.txt"
-    log_file = open(log_file_path, 'w')
-    log_file.write('Time\tGazeX\tGazeY\tTrial\tTarget\tGazing\n')  # Writing header
+    log_file_path = "logs"
+    if not os.path.exists(log_file_path):
+        os.makedirs(log_file_path)
+
     clock = core.Clock()
-    
+
 
     win.flip()
 
@@ -89,7 +90,7 @@ with get_marker('stimtracker',win) as marker:
     tracker = io.devices.tracker
     # run eyetracker calibration
     r = tracker.runSetupProcedure()
-    
+
     def call_setup(tracker_var):
         tracker_var.setRecordingState(False)
         tracker_var.runSetupProcedure()
@@ -108,7 +109,9 @@ with get_marker('stimtracker',win) as marker:
     for t in range(1,num_iterations+1):
         win.flip()
         wait(1)
-
+        log_file_name = "log"+str(t)+".txt"
+        log_file = open(os.path.join(log_file_path,log_file_name), 'w')
+        log_file.write('Time\tGazeX\tGazeY\tTrial\tTarget\tGazing\n')  # Writing header
 
         trial_target = random.randint(1,16)
         textboxloaded.setText("Target(" +str(t)+ ") is Box "+ str(trial_target))
