@@ -20,7 +20,15 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 subfolder_path = os.path.join(current_dir, 'pyequipmentlib_d/src/equipment/')
 sys.path.append(subfolder_path)
 from marker  import get_marker
-    
+
+
+user = "arne_"
+exp_num = "1"
+exp_type = "real_"
+log_folder_name = user+exp_type+exp_num
+num_iterations=2 #experiment interations
+
+
 win = visual.Window(size=(1280, 720),pos=(0,0),allowGUI=True, monitor='testMonitor', units='pix', screen=0, color=(-0.2, -0.2, -0.2), fullscr=True, colorSpace='rgb')
 with get_marker('stimtracker',win) as marker:
 
@@ -28,7 +36,6 @@ with get_marker('stimtracker',win) as marker:
     gaze_time = 2.0 #gaze time needed to select
     select_time = 0.5
     window_size = 10 # rolling average window for gaze positions
-    num_iterations=2 #experiment interations
     if window_size <= 0:
             raise ValueError("Window size must be a positive integer.")
 
@@ -77,7 +84,7 @@ with get_marker('stimtracker',win) as marker:
 
 
     # Open a data file for logging
-    log_file_path = "logs"
+    log_file_path = "logs" + log_folder_name
     if not os.path.exists(log_file_path):
         os.makedirs(log_file_path)
 
@@ -98,7 +105,7 @@ with get_marker('stimtracker',win) as marker:
         global recalibrated
         recalibrated = True
 
-    keyboard.add_hotkey('ctrl+shift+c', lambda: call_setup(tracker))
+    # keyboard.add_hotkey('ctrl+shift+c', lambda: call_setup(tracker))
     # Check for and print any eye tracker events received...
     tracker.setRecordingState(True)
 
@@ -120,7 +127,7 @@ with get_marker('stimtracker',win) as marker:
         # Set marker value to 1 
         marker.send(1) 
         win.flip()
-
+        log_file.write(f'{clock.getTime()}\txx\txx\txx\txx\txx\n')
 
         stime = getTime()
         
@@ -169,12 +176,15 @@ with get_marker('stimtracker',win) as marker:
         button_box1.update_button_color(trial_target,button_box1.color_three)
         button_box1.draw_all()
         win.flip()
+        log_file.write(f'{clock.getTime()}\tyy\tyy\tyy\tyy\tyy\n')
         wait(select_time)
         button_box1.update_button_color(trial_target,button_box1.color_one)
         print("trial"+str(t)+" ended")
         # Set marker value to 4
         marker.send(4) 
         win.flip()
+        log_file.write(f'{clock.getTime()}\tzz\tzz\tzz\tzz\tzz\n')
+
 
 
 
