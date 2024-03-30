@@ -22,11 +22,11 @@ sys.path.append(subfolder_path)
 from marker  import get_marker
 
 
-user = "arne_"
-exp_num = "1"
+user = "_reni_"
+exp_num = "xx"
 exp_type = "real_"
 log_folder_name = user+exp_type+exp_num
-num_iterations=2 #experiment interations
+num_iterations=50 #experiment interations
 
 
 win = visual.Window(size=(1280, 720),pos=(0,0),allowGUI=True, monitor='testMonitor', units='pix', screen=0, color=(-0.2, -0.2, -0.2), fullscr=True, colorSpace='rgb')
