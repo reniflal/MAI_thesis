@@ -27,7 +27,7 @@ exp_num = "xx"
 exp_type = "real_"
 log_folder_name = user+exp_type+exp_num
 num_iterations=50 #experiment interations
-
+press_for_next = False
 
 win = visual.Window(size=(1280, 720),pos=(0,0),allowGUI=True, monitor='testMonitor', units='pix', screen=0, color=(-0.2, -0.2, -0.2), fullscr=True, colorSpace='rgb')
 with get_marker('stimtracker',win) as marker:
@@ -79,6 +79,7 @@ with get_marker('stimtracker',win) as marker:
     yaml_file_path = 'tobii_config.yml'
     with open(yaml_file_path, 'r') as file:
         ioConfig = {'eyetracker.hw.tobii.EyeTracker':yaml.safe_load(file), 'window': win}
+
     io = launchHubServer(**ioConfig)
 
 
@@ -98,21 +99,53 @@ with get_marker('stimtracker',win) as marker:
     # run eyetracker calibration
     r = tracker.runSetupProcedure()
 
-    def call_setup(tracker_var):
-        tracker_var.setRecordingState(False)
-        tracker_var.runSetupProcedure()
-        tracker_var.setRecordingState(True)
-        global recalibrated
-        recalibrated = True
+    def wait_till_see_textbox():
+        next_box = visual.Rect( win=win, name="next", fillColor=button_box1.color_two, lineColor=button_box1.color_one,  size=button_box1.size,
+                                    pos=(0,400), opacity=1)
+        text_next = visual.TextStim(win=win, text='Next', color='black', height=20, pos=(0,400))
+        
+        next_box.draw()
+        text_next.draw()
+        win.flip()
+        not_looked = True
+        window_queuex = deque(maxlen=window_size)
+        window_queuey = deque(maxlen=window_size)
+        while(not_looked):
+            gaze_pos_temp = tracker.getPosition()
+            if(not isinstance(gaze_pos_temp,list)):
+                continue
+            if((gaze_pos_temp ==None)):
+                continue
+            window_queuex.append(gaze_pos_temp[0])
+            window_queuey.append(gaze_pos_temp[1])
+            if len(window_queuex) == window_size:
+                gaze_pos[0] = sum(window_queuex)/window_size
+                gaze_pos[1] = sum(window_queuey)/window_size
+            else:
+                gaze_pos = gaze_pos_temp
+            
+            next_box.draw()
+            text_next.draw()
+            visual.Circle(win, pos=(gaze_pos[0],gaze_pos[1]), radius=10, fillColor='red').draw()
+            win.flip()
+            if(next_box.contains(gaze_pos)):
+                not_looked = False
 
-    # keyboard.add_hotkey('ctrl+shift+c', lambda: call_setup(tracker))
+        
+
+    def exit_program():
+        print("exiting program")
+        win.close()  # Close the PsychoPy window
+        sys.exit(1)
+
+    keyboard.add_hotkey('ctrl+shift+e', exit_program)
     # Check for and print any eye tracker events received...
     tracker.setRecordingState(True)
 
     wait(1)
     window_queue0 = deque(maxlen=window_size)
     window_queue1 = deque(maxlen=window_size)
-
+    g_str_prev = 0
     for t in range(1,num_iterations+1):
         win.flip()
         wait(1)
@@ -138,8 +171,6 @@ with get_marker('stimtracker',win) as marker:
         while (gaze_out_time-gaze_in_time < gaze_time) and (getTime() - stime < time_out):  
 
             gaze_pos_temp = tracker.getPosition()
-            # print(gaze_pos_temp)
-            # print(type(gaze_pos_temp))
             if(not isinstance(gaze_pos_temp,list)):
                 continue
             if((gaze_pos_temp ==None)):
@@ -154,17 +185,28 @@ with get_marker('stimtracker',win) as marker:
             else:
                 gaze_pos = gaze_pos_temp
             visual.Circle(win, pos=(gaze_pos[0],gaze_pos[1]), radius=10, fillColor='red').draw()
-            if(button_box1.check_button_gaze(trial_target,gaze_pos) and gazing==False):
+            g_str = button_box1.which_button_gaze(gaze_pos)
+            if(g_str==trial_target  and gazing==False):
                 gazing = True
                 gaze_in_time = getTime()
                 button_box1.update_button_color(trial_target,button_box1.color_two)
-            elif (button_box1.check_button_gaze(trial_target,gaze_pos) and gazing==True):
+                button_box1.update_button_color(g_str_prev,button_box1.color_one)
+            elif (g_str==trial_target and gazing==True):
                 gaze_out_time = getTime()
                 button_box1.update_button_color(trial_target,button_box1.color_two)
+                button_box1.update_button_color(g_str_prev,button_box1.color_one)
             elif (gazing == True):
                 gazing = False
                 button_box1.update_button_color(trial_target,button_box1.color_one)
-            g_str = button_box1.which_button_gaze(gaze_pos)
+                button_box1.update_button_color(g_str_prev,button_box1.color_one)
+            elif(g_str != 0):
+                button_box1.update_button_color(g_str_prev,button_box1.color_one)
+                button_box1.update_button_color(g_str,button_box1.color_four)
+                g_str_prev = g_str
+            elif(g_str == 0):
+                button_box1.update_button_color(g_str_prev,button_box1.color_one)
+
+            
             log_file.write(f'{clock.getTime()}\t{gaze_pos[0]}\t{gaze_pos[1]}\t{t}\t{trial_target}\t{g_str}\n')
             textboxloaded.draw()
             button_box1.draw_all()
@@ -184,6 +226,10 @@ with get_marker('stimtracker',win) as marker:
         marker.send(4) 
         win.flip()
         log_file.write(f'{clock.getTime()}\tzz\tzz\tzz\tzz\tzz\n')
+        if(press_for_next):
+            keyboard.wait('n')
+        else:
+            wait_till_see_textbox()
 
 
 

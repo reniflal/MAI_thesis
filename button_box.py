@@ -6,25 +6,26 @@ class button_box:
         self.color_one = 'red'
         self.color_two = 'green'
         self.color_three = 'blue'
+        self.color_four = 'magenta'
         self.win = window
-        self.size = 150
+        self.size = 225
         self.pos = []
-        self.pos1 = (-600,200)
-        self.pos2 = (-400,200)
-        self.pos3 = (-200,200)
-        self.pos4 = (0,200)
-        self.pos5 = (200,200)
-        self.pos6 = (400,200)
-        self.pos7 = (600,200)
-        self.pos8 = (-600,0)
-        self.pos9 = (-400,0)
-        self.pos10 = (-200,0)
-        self.pos11 = (0,0)
-        self.pos12 = (200,0)
-        self.pos13 = (400,0)
-        self.pos14 = (600,0)
-        self.pos15 = (0,-200)
-        self.pos16 = (0,-400)
+        self.pos1 = (-600,400)
+        self.pos2 = (600,400)
+        self.pos3 = (-600,150)
+        self.pos4 = (-300,150)
+        self.pos5 = (0,150)
+        self.pos6 = (300,150)
+        self.pos7 = (600,150)
+        self.pos8 = (-600,-100)
+        self.pos9 = (-300,-100)
+        self.pos10 = (0,-100)
+        self.pos11 = (300,-100)
+        self.pos12 = (600,-100)
+        self.pos13 = (-600,-350)
+        self.pos14 = (-300,-350)
+        self.pos15 = (0,-350)
+        self.pos16 = (300,-350)
         self.pos.append(self.pos1)
         self.pos.append(self.pos2)
         self.pos.append(self.pos3)
