@@ -22,11 +22,11 @@ sys.path.append(subfolder_path)
 from marker  import get_marker
 
 
-user = "_reni_"
-exp_num = "xx"
-exp_type = "real_"
+user = "_arne_"
+exp_num = "03_05_tt3"
+exp_type = "imag_"
 log_folder_name = user+exp_type+exp_num
-num_iterations=50 #experiment interations
+num_iterations=25 #experiment interations
 press_for_next = False
 
 win = visual.Window(size=(1280, 720),pos=(0,0),allowGUI=True, monitor='testMonitor', units='pix', screen=0, color=(-0.2, -0.2, -0.2), fullscr=True, colorSpace='rgb')
@@ -99,7 +99,7 @@ with get_marker('stimtracker',win) as marker:
     # run eyetracker calibration
     r = tracker.runSetupProcedure()
 
-    def wait_till_see_textbox():
+    def wait_till_see_textbox(window_queuex, window_queuey):
         next_box = visual.Rect( win=win, name="next", fillColor=button_box1.color_two, lineColor=button_box1.color_one,  size=button_box1.size,
                                     pos=(0,400), opacity=1)
         text_next = visual.TextStim(win=win, text='Next', color='black', height=20, pos=(0,400))
@@ -108,8 +108,8 @@ with get_marker('stimtracker',win) as marker:
         text_next.draw()
         win.flip()
         not_looked = True
-        window_queuex = deque(maxlen=window_size)
-        window_queuey = deque(maxlen=window_size)
+        # window_queuex = deque(maxlen=window_size)
+        # window_queuey = deque(maxlen=window_size)
         while(not_looked):
             gaze_pos_temp = tracker.getPosition()
             if(not isinstance(gaze_pos_temp,list)):
@@ -118,6 +118,7 @@ with get_marker('stimtracker',win) as marker:
                 continue
             window_queuex.append(gaze_pos_temp[0])
             window_queuey.append(gaze_pos_temp[1])
+            gaze_pos = gaze_pos_temp
             if len(window_queuex) == window_size:
                 gaze_pos[0] = sum(window_queuex)/window_size
                 gaze_pos[1] = sum(window_queuey)/window_size
@@ -147,6 +148,7 @@ with get_marker('stimtracker',win) as marker:
     window_queue1 = deque(maxlen=window_size)
     g_str_prev = 0
     for t in range(1,num_iterations+1):
+        button_box1.create_all()
         win.flip()
         wait(1)
         log_file_name = "log"+str(t)+".txt"
@@ -157,7 +159,7 @@ with get_marker('stimtracker',win) as marker:
         textboxloaded.setText("Target(" +str(t)+ ") is Box "+ str(trial_target))
         textboxloaded.draw()
         button_box1.draw_all()
-        # Set marker value to 1 
+        # Set marker value to 1 - start of trial
         marker.send(1) 
         win.flip()
         log_file.write(f'{clock.getTime()}\txx\txx\txx\txx\txx\n')
@@ -167,6 +169,7 @@ with get_marker('stimtracker',win) as marker:
         gaze_in_time = 0
         gaze_out_time = 0
         gazing = False
+        non_target_gazing = False
         
         while (gaze_out_time-gaze_in_time < gaze_time) and (getTime() - stime < time_out):  
 
@@ -187,34 +190,46 @@ with get_marker('stimtracker',win) as marker:
             visual.Circle(win, pos=(gaze_pos[0],gaze_pos[1]), radius=10, fillColor='red').draw()
             g_str = button_box1.which_button_gaze(gaze_pos)
             if(g_str==trial_target  and gazing==False):
+                # Set marker value to 2 - into target box
+                marker.send(2) 
                 gazing = True
                 gaze_in_time = getTime()
-                button_box1.update_button_color(trial_target,button_box1.color_two)
-                button_box1.update_button_color(g_str_prev,button_box1.color_one)
+                button_box1.update_button_color(trial_target,button_box1.color_four)
             elif (g_str==trial_target and gazing==True):
                 gaze_out_time = getTime()
-                button_box1.update_button_color(trial_target,button_box1.color_two)
-                button_box1.update_button_color(g_str_prev,button_box1.color_one)
+                button_box1.update_button_color(trial_target,button_box1.color_four)
             elif (gazing == True):
                 gazing = False
+                # Set marker value to 3 - out of target box
+                marker.send(3) 
                 button_box1.update_button_color(trial_target,button_box1.color_one)
-                button_box1.update_button_color(g_str_prev,button_box1.color_one)
-            elif(g_str != 0):
-                button_box1.update_button_color(g_str_prev,button_box1.color_one)
-                button_box1.update_button_color(g_str,button_box1.color_four)
-                g_str_prev = g_str
-            elif(g_str == 0):
-                button_box1.update_button_color(g_str_prev,button_box1.color_one)
 
+
+            if(g_str!=g_str_prev and g_str_prev!=trial_target):
+                # Set marker value to 5 - out of non-target box
+                marker.send(5)
+                if(g_str_prev!=0):
+                    button_box1.update_button_color(g_str_prev,button_box1.color_one)
+
+
+            if(g_str!=0 and g_str!=trial_target and g_str!=g_str_prev):
+                # Set marker value to 4 - into non-target box
+                marker.send(4) 
+                if(g_str_prev!=0):
+                    button_box1.update_button_color(g_str_prev,button_box1.color_one)
+                button_box1.update_button_color(g_str,button_box1.color_four)
             
+            
+            
+            g_str_prev = g_str
             log_file.write(f'{clock.getTime()}\t{gaze_pos[0]}\t{gaze_pos[1]}\t{t}\t{trial_target}\t{g_str}\n')
             textboxloaded.draw()
             button_box1.draw_all()
             win.flip()
             wait(0.05)
 
-        # Set marker value to 2
-        marker.send(2) 
+        # Set marker value to 6
+        marker.send(6) 
         button_box1.update_button_color(trial_target,button_box1.color_three)
         button_box1.draw_all()
         win.flip()
@@ -222,14 +237,14 @@ with get_marker('stimtracker',win) as marker:
         wait(select_time)
         button_box1.update_button_color(trial_target,button_box1.color_one)
         print("trial"+str(t)+" ended")
-        # Set marker value to 4
-        marker.send(4) 
+        # Set marker value to 7
+        marker.send(7) 
         win.flip()
         log_file.write(f'{clock.getTime()}\tzz\tzz\tzz\tzz\tzz\n')
         if(press_for_next):
             keyboard.wait('n')
         else:
-            wait_till_see_textbox()
+            wait_till_see_textbox(window_queue0,window_queue1)
 
 
 
