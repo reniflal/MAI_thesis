@@ -22,9 +22,9 @@ sys.path.append(subfolder_path)
 from marker  import get_marker
 
 
-user = "_arne_"
-exp_num = "03_05_tt3"
-exp_type = "imag_"
+user = "_renif_"
+exp_num = "check"
+exp_type = "trial_"
 log_folder_name = user+exp_type+exp_num
 num_iterations=25 #experiment interations
 press_for_next = False
@@ -161,6 +161,7 @@ with get_marker('stimtracker',win) as marker:
         button_box1.draw_all()
         # Set marker value to 1 - start of trial
         marker.send(1) 
+        # print("marker 1")
         win.flip()
         log_file.write(f'{clock.getTime()}\txx\txx\txx\txx\txx\n')
 
@@ -189,9 +190,18 @@ with get_marker('stimtracker',win) as marker:
                 gaze_pos = gaze_pos_temp
             visual.Circle(win, pos=(gaze_pos[0],gaze_pos[1]), radius=10, fillColor='red').draw()
             g_str = button_box1.which_button_gaze(gaze_pos)
+            
+            if(g_str_prev!=0 and g_str!=g_str_prev and g_str_prev!=trial_target):
+                # Set marker value to 5 - out of non-target box
+                marker.send(5)
+                # print("marker 5")
+                if(g_str_prev!=0):
+                    button_box1.update_button_color(g_str_prev,button_box1.color_one)
+
             if(g_str==trial_target  and gazing==False):
                 # Set marker value to 2 - into target box
                 marker.send(2) 
+                # print("marker 2")
                 gazing = True
                 gaze_in_time = getTime()
                 button_box1.update_button_color(trial_target,button_box1.color_four)
@@ -202,23 +212,21 @@ with get_marker('stimtracker',win) as marker:
                 gazing = False
                 # Set marker value to 3 - out of target box
                 marker.send(3) 
+                # print("marker 3")
                 button_box1.update_button_color(trial_target,button_box1.color_one)
 
 
-            if(g_str!=g_str_prev and g_str_prev!=trial_target):
-                # Set marker value to 5 - out of non-target box
-                marker.send(5)
-                if(g_str_prev!=0):
-                    button_box1.update_button_color(g_str_prev,button_box1.color_one)
+
 
 
             if(g_str!=0 and g_str!=trial_target and g_str!=g_str_prev):
                 # Set marker value to 4 - into non-target box
                 marker.send(4) 
+                # print("marker 4")
                 if(g_str_prev!=0):
                     button_box1.update_button_color(g_str_prev,button_box1.color_one)
                 button_box1.update_button_color(g_str,button_box1.color_four)
-            
+
             
             
             g_str_prev = g_str
@@ -230,6 +238,7 @@ with get_marker('stimtracker',win) as marker:
 
         # Set marker value to 6
         marker.send(6) 
+        # print("marker 6")
         button_box1.update_button_color(trial_target,button_box1.color_three)
         button_box1.draw_all()
         win.flip()
@@ -239,6 +248,7 @@ with get_marker('stimtracker',win) as marker:
         print("trial"+str(t)+" ended")
         # Set marker value to 7
         marker.send(7) 
+        # print("marker 7")
         win.flip()
         log_file.write(f'{clock.getTime()}\tzz\tzz\tzz\tzz\tzz\n')
         if(press_for_next):
