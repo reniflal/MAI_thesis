@@ -238,19 +238,19 @@ with get_marker('stimtracker',win) as marker:
 
         # Set marker value to 6
         marker.send(6) 
+        log_file.write(f'{clock.getTime()}\tyy\tyy\tyy\tyy\tyy\n')
         # print("marker 6")
         button_box1.update_button_color(trial_target,button_box1.color_three)
         button_box1.draw_all()
         win.flip()
-        log_file.write(f'{clock.getTime()}\tyy\tyy\tyy\tyy\tyy\n')
         wait(select_time)
         button_box1.update_button_color(trial_target,button_box1.color_one)
         print("trial"+str(t)+" ended")
         # Set marker value to 7
         marker.send(7) 
+        log_file.write(f'{clock.getTime()}\tzz\tzz\tzz\tzz\tzz\n')
         # print("marker 7")
         win.flip()
-        log_file.write(f'{clock.getTime()}\tzz\tzz\tzz\tzz\tzz\n')
         if(press_for_next):
             keyboard.wait('n')
         else:
